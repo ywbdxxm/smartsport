@@ -1,0 +1,3 @@
+[submodule "doc/imu/ICM45686-Module"]
+	path = doc/imu/ICM45686-Module
+	url = git@github.com:sheemia/ICM45686-Module.git

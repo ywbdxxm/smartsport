@@ -1,0 +1,23 @@
+# Smart Sport
+
+智能运动背心研发仓库，包含产品与硬件资料以及 ESP32-S3 固件工程。
+
+## 目录
+
+- `doc/`：产品方案、器件选型和项目使用的硬件资料。
+- `firmware/`：基于 ESP-IDF 6.1 的 ESP32-S3 固件。
+
+`doc/imu/ICM45686-Module/` 作为 Git 子模块管理。首次克隆后执行：
+
+```powershell
+git submodule update --init --recursive
+```
+
+## 当前固件基线
+
+- 目标芯片：ESP32-S3
+- Flash：16 MB Quad SPI
+- PSRAM：8 MB Octal SPI，80 MHz
+- 当前程序：硬件连通性验证用的 Hello World
+
+具体构建和烧录方法见 `firmware/README.md`。
