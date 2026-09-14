@@ -9,4 +9,9 @@ CMakeLists.txt text eol=lf
 
 *.docx binary
 *.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.zip binary
+*.7z binary
 *.xlsx binary

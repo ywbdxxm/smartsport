@@ -15,9 +15,10 @@ git submodule update --init --recursive
 
 ## 当前固件基线
 
+- 开发板：芯路城 ESP32S3 开发板（ESP32-S3-WROOM-1-N16R8）
 - 目标芯片：ESP32-S3
 - Flash：16 MB Quad SPI
 - PSRAM：8 MB Octal SPI，80 MHz
-- 当前程序：硬件连通性验证用的 Hello World
+- 当前程序：硬件连通性与 GPIO48 板载 WS2812B 验证
 
 具体构建和烧录方法见 `firmware/README.md`。
