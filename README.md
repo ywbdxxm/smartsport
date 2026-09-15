@@ -19,6 +19,6 @@ git submodule update --init --recursive
 - 目标芯片：ESP32-S3
 - Flash：16 MB Quad SPI
 - PSRAM：8 MB Octal SPI，80 MHz
-- 当前程序：硬件连通性与 GPIO48 板载 WS2812B 验证
+- 当前程序：GPIO48 板载 WS2812B 与 JYTech ICM-45686 I²C 数据读取（待目标板实测）
 
 具体构建和烧录方法见 `firmware/README.md`。
