@@ -145,7 +145,7 @@ Expected: ESP32-S3 firmware and bootloader build successfully with the checked-i
 
 Run `git diff --check`, inspect the full diff, verify `format_if_mount_failed = false`, verify SD errors cannot bypass IMU startup, and confirm only the diagnostic file can be removed.
 
-- [ ] **Step 4: Commit and push the requested main branch**
+- [x] **Step 4: Commit and push the requested main branch**
 
 Commit the architecture/plan separately from implementation if the history is not already split, commit implementation with a focused message, and push `main:main` without changing global proxy configuration.
 
