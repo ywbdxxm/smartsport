@@ -22,3 +22,5 @@ git submodule update --init --recursive
 - 当前程序：GPIO48 板载 WS2812B 与 JYTech ICM-45686 I²C 数据读取（待目标板实测）
 
 具体构建和烧录方法见 `firmware/README.md`。
+
+IMU、SD 卡和 GNSS 预留的统一接线基线见 `doc/模块接线最终规划.md`。
