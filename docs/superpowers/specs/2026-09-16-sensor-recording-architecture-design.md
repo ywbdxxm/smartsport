@@ -28,7 +28,7 @@ The eventual recording path has four layers:
 1. Sensor drivers own their peripheral transactions and translate raw device values into typed samples.
 2. Sensor producer tasks timestamp samples with the ESP32 monotonic clock and submit fixed-size record messages. Producers never open files or call an SD API.
 3. A single recorder task owns the record queue consumer, session state, serialization buffer, SD mount handle, and session file handle. No other task writes the session file.
-4. The `storage_sd` component owns the SPI2 bus lifecycle and FAT mount. It exposes mount, smoke-test, mount-point, and unmount operations without exposing the `sdmmc_card_t` object.
+4. The `storage_sd` component owns the SPI2 bus lifecycle and FAT mount. It exposes mount, smoke-test, and unmount operations without exposing the `sdmmc_card_t` object.
 
 The first increment implements layer 4 only. It is intentionally usable before the GNSS and heart-rate protocols are fixed.
 

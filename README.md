@@ -19,8 +19,10 @@ git submodule update --init --recursive
 - 目标芯片：ESP32-S3
 - Flash：16 MB Quad SPI
 - PSRAM：8 MB Octal SPI，80 MHz
-- 当前程序：GPIO48 板载 WS2812B 与 JYTech ICM-45686 I²C 数据读取（待目标板实测）
+- 当前程序：GPIO48 板载 WS2812B、JYTech ICM-45686 I²C 数据读取，以及非致命 SD 启动冒烟测试
 
 具体构建和烧录方法见 `firmware/README.md`。
 
 IMU、SD 卡和 GNSS 预留的统一接线基线见 `doc/模块接线最终规划.md`。
+
+IMU、GNSS、心率数据统一进入单一记录任务并写入会话文件的整体架构见 `doc/数据采集与存储架构.md`。

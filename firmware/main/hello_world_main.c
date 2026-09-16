@@ -17,6 +17,7 @@
 #include "imu_log_throttle.h"
 #include "led_strip.h"
 #include "sdkconfig.h"
+#include "storage_sd.h"
 #include <inttypes.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -52,6 +53,44 @@ static void configure_status_led(void) {
 static void set_status_led(uint8_t red, uint8_t green, uint8_t blue) {
   ESP_ERROR_CHECK(led_strip_set_pixel(status_led, 0, red, green, blue));
   ESP_ERROR_CHECK(led_strip_refresh(status_led));
+}
+
+static void run_sd_smoke_test(void) {
+  const storage_sd_config_t sd_config = {
+      .host_id = BOARD_SD_SPI_HOST,
+      .mosi_gpio = BOARD_SD_MOSI_GPIO,
+      .miso_gpio = BOARD_SD_MISO_GPIO,
+      .sclk_gpio = BOARD_SD_SCLK_GPIO,
+      .cs_gpio = BOARD_SD_CS_GPIO,
+      .cd_gpio = BOARD_SD_CD_GPIO,
+      .max_freq_khz = BOARD_SD_MAX_FREQ_KHZ,
+  };
+  storage_sd_handle_t sd = NULL;
+
+  esp_err_t mount_error = storage_sd_mount(&sd_config, &sd);
+  if (mount_error != ESP_OK) {
+    ESP_LOGE(TAG,
+             "SD unavailable; smoke test skipped and sensor startup will "
+             "continue: %s",
+             esp_err_to_name(mount_error));
+    return;
+  }
+
+  esp_err_t smoke_error = storage_sd_run_smoke_test(sd);
+  if (smoke_error != ESP_OK) {
+    ESP_LOGE(TAG, "SD smoke test failed; sensor startup will continue: %s",
+             esp_err_to_name(smoke_error));
+  }
+
+  esp_err_t unmount_error = storage_sd_unmount(sd);
+  if (unmount_error != ESP_OK) {
+    ESP_LOGE(TAG, "SD cleanup failed; sensor startup will continue: %s",
+             esp_err_to_name(unmount_error));
+  }
+
+  if (smoke_error == ESP_OK && unmount_error == ESP_OK) {
+    ESP_LOGI(TAG, "SD startup smoke test completed successfully");
+  }
 }
 
 static i2c_master_bus_handle_t configure_i2c_bus(void) {
@@ -126,6 +165,8 @@ void app_main(void) {
 
   configure_status_led();
   printf("Onboard WS2812B is on GPIO %d.\n", BOARD_STATUS_LED_GPIO);
+
+  run_sd_smoke_test();
 
   i2c_master_bus_handle_t i2c_bus = configure_i2c_bus();
   ESP_LOGI(TAG, "ICM-45686 I2C: SDA GPIO%d, SCL GPIO%d, %d Hz",
