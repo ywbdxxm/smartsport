@@ -14,6 +14,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "icm45686.h"
+#include "imu_log_throttle.h"
 #include "led_strip.h"
 #include "sdkconfig.h"
 #include <inttypes.h>
@@ -24,6 +25,7 @@
 #define STATUS_LED_RMT_RESOLUTION_HZ (10 * 1000 * 1000)
 #define STATUS_LED_BRIGHTNESS 16
 #define IMU_SAMPLE_PERIOD_MS 100
+#define IMU_LOG_PERIOD_MS 1000
 #define IMU_INIT_RETRY_PERIOD_MS 2000
 #define LED_TOGGLE_SAMPLE_COUNT 5
 
@@ -80,7 +82,7 @@ static icm45686_handle_t wait_for_imu(i2c_master_bus_handle_t i2c_bus) {
       break;
     }
     ESP_LOGE(TAG,
-             "ICM-45686 init failed: %s. Check 3V3, GND, SDA GPIO%d and "
+             "ICM-45686 init failed: %s. Check VIN 5V, GND, SDA GPIO%d and "
              "SCL GPIO%d.",
              esp_err_to_name(error), BOARD_IMU_I2C_SDA_GPIO,
              BOARD_IMU_I2C_SCL_GPIO);
@@ -135,16 +137,21 @@ void app_main(void) {
 
   uint32_t sample_count = 0;
   bool led_on = false;
+  imu_log_throttle_t log_throttle = {0};
   while (1) {
     icm45686_sample_t sample;
     esp_err_t error = icm45686_read_sample(imu, &sample);
     if (error == ESP_OK) {
-      printf("IMU #%-6" PRIu32
-             " acc(mg): %8.2f %8.2f %8.2f  gyro(dps): %8.2f %8.2f "
-             "%8.2f  temp(C): %6.2f\n",
-             ++sample_count, sample.accel_mg[0], sample.accel_mg[1],
-             sample.accel_mg[2], sample.gyro_dps[0], sample.gyro_dps[1],
-             sample.gyro_dps[2], sample.temperature_c);
+      ++sample_count;
+      if (imu_log_throttle_due(&log_throttle, esp_log_timestamp(),
+                               IMU_LOG_PERIOD_MS)) {
+        printf("IMU #%-6" PRIu32
+               " acc(mg): %8.2f %8.2f %8.2f  gyro(dps): %8.2f %8.2f "
+               "%8.2f  temp(C): %6.2f\n",
+               sample_count, sample.accel_mg[0], sample.accel_mg[1],
+               sample.accel_mg[2], sample.gyro_dps[0], sample.gyro_dps[1],
+               sample.gyro_dps[2], sample.temperature_c);
+      }
 
       if ((sample_count % LED_TOGGLE_SAMPLE_COUNT) == 0) {
         led_on = !led_on;
